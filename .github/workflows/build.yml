@@ -1,0 +1,95 @@
+name: Build TWRP TB-J706F
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: twrp-tb-j706f-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 10240
+          swap-size-mb: 12288
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 python-is-python3
+          sudo apt-get clean
+          git config --global user.name "FallenDawn"
+          git config --global user.email "6547774+FallenDawn@users.noreply.github.com"
+
+      - name: Install Repo launcher
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo -o "$HOME/bin/repo"
+          chmod a+rx "$HOME/bin/repo"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - name: Initialize TWRP Android 10 source
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/twrp"
+          cd "$GITHUB_WORKSPACE/twrp"
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git -b twrp-10.0-deprecated
+          mkdir -p .repo/local_manifests
+          cp "$GITHUB_WORKSPACE/.github/local_manifests/j706f.xml" .repo/local_manifests/j706f.xml
+
+      - name: Sync source
+        run: |
+          cd "$GITHUB_WORKSPACE/twrp"
+          repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j2
+
+      - name: Build recovery image
+        run: |
+          cd "$GITHUB_WORKSPACE/twrp"
+          export ALLOW_MISSING_DEPENDENCIES=true
+          export WITH_DEXPREOPT=false
+          source build/envsetup.sh
+          lunch omni_J706F-eng
+          mka recoveryimage -j2
+
+      - name: Verify output
+        if: success()
+        run: |
+          test -s "$GITHUB_WORKSPACE/twrp/out/target/product/J706F/recovery.img"
+          file "$GITHUB_WORKSPACE/twrp/out/target/product/J706F/recovery.img"
+          sha256sum "$GITHUB_WORKSPACE/twrp/out/target/product/J706F/recovery.img"
+
+      - name: Upload recovery image
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TWRP-TB-J706F-recovery
+          path: |
+            twrp/out/target/product/J706F/recovery.img
+            twrp/out/target/product/J706F/ramdisk-recovery.img
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TWRP-TB-J706F-build-diagnostics
+          path: |
+            twrp/out/soong.log
+            twrp/out/build.log
+            twrp/out/target/product/J706F/obj/PACKAGING
+          if-no-files-found: ignore
+          retention-days: 7
