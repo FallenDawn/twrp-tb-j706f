@@ -55,7 +55,7 @@ jobs:
         run: |
           mkdir -p "$GITHUB_WORKSPACE/twrp"
           cd "$GITHUB_WORKSPACE/twrp"
-          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-10.0-deprecated
+          repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git -b twrp-10.0-deprecated
           mkdir -p .repo/local_manifests
           cp "$GITHUB_WORKSPACE/.github/local_manifests/j706f.xml" .repo/local_manifests/j706f.xml
 
@@ -64,17 +64,13 @@ jobs:
           cd "$GITHUB_WORKSPACE/twrp"
           repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j2
 
-      - name: Adapt J706F product for TWRP AOSP manifest
-        run: |
-          bash "$GITHUB_WORKSPACE/.github/scripts/prepare-device-tree.sh" "$GITHUB_WORKSPACE/twrp/device/lenovo/J706F"
-
       - name: Build recovery image
         run: |
           cd "$GITHUB_WORKSPACE/twrp"
           export ALLOW_MISSING_DEPENDENCIES=true
           export WITH_DEXPREOPT=false
           source build/envsetup.sh
-          lunch twrp_J706F-eng
+          lunch omni_J706F-eng
           mka recoveryimage -j2
 
       - name: Verify output
