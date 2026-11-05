@@ -6,7 +6,7 @@
 - Device tree product: J706F
 - SoC: Qualcomm SM7150 / Snapdragon 730G
 - Base device tree: HK4567/twrp_device_lenovo_TB-J706F, branch Android-10
-- Build manifest: minimal-manifest-twrp/platform_manifest_twrp_aosp, branch twrp-10.0-deprecated
+- Build manifest: minimal-manifest-twrp/platform_manifest_twrp_omni, branch twrp-10.0-deprecated
 - Build target: recoveryimage
 - Required feature: userspace fastbootd
 
@@ -14,7 +14,7 @@
 
 GitHub Actions starts on pushes to main and can also be started manually from the Actions tab.
 
-The workflow imports the J706F Android 10 device tree and TeamWin's Android 10 Qualcomm common recovery trees. It adapts the legacy Omni product makefile to the TWRP AOSP manifest's twrp_J706F lunch target. The device tree supplies its checked-in kernel, DTB and DTBO prebuilts.
+The workflow uses the original Omni-based TWRP 10.0 build environment, which matches the upstream J706F device tree's omni_J706F product files. It imports TeamWin's Android 10 Qualcomm common recovery trees. The device tree supplies its checked-in kernel, DTB and DTBO prebuilts.
 
 ## Important
 
