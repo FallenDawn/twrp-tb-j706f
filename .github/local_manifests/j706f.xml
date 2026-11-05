@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <remote name="github" fetch="https://github.com/" />
-  <project name="HK4567/twrp_device_lenovo_TB-J706F" path="device/lenovo/J706F" remote="github" revision="Android-10" />
-  <project name="TeamWin/android_device_qcom_common" path="device/qcom/common" remote="github" revision="android-10" />
-  <project name="TeamWin/android_device_qcom_twrp-common" path="device/qcom/twrp-common" remote="github" revision="android-10" />
+  <remote name="j706f-github" fetch="https://github.com/" />
+  <project name="HK4567/twrp_device_lenovo_TB-J706F" path="device/lenovo/J706F" remote="j706f-github" revision="Android-10" />
+  <project name="TeamWin/android_device_qcom_common" path="device/qcom/common" remote="j706f-github" revision="android-10" />
+  <project name="TeamWin/android_device_qcom_twrp-common" path="device/qcom/twrp-common" remote="j706f-github" revision="android-10" />
 </manifest>
