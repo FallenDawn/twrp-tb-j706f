@@ -3,10 +3,10 @@
 独立的原版 TWRP 构建项目，不集成 OrangeFox。
 
 - Device: Lenovo TB-J706F
-- Codename: pearl_prc_wifi (device tree product: J706F)
+- Device tree product: J706F
 - SoC: Qualcomm SM7150 / Snapdragon 730G
-- Base tree: HK4567/twrp_device_lenovo_TB-J706F, branch Android-10
-- Build system: minimal-manifest-twrp/platform_manifest_twrp_omni, branch twrp-10.0-deprecated
+- Base device tree: HK4567/twrp_device_lenovo_TB-J706F, branch Android-10
+- Build manifest: minimal-manifest-twrp/platform_manifest_twrp_aosp, branch twrp-10.0-deprecated
 - Build target: recoveryimage
 - Required feature: userspace fastbootd
 
@@ -14,7 +14,7 @@
 
 GitHub Actions starts on pushes to main and can also be started manually from the Actions tab.
 
-The workflow uses the upstream J706F Android 10 device tree and its checked-in prebuilt kernel, DTB and DTBO. It also syncs TeamWin's Android 10 Qualcomm common recovery trees.
+The workflow imports the J706F Android 10 device tree and TeamWin's Android 10 Qualcomm common recovery trees. It adapts the legacy Omni product makefile to the TWRP AOSP manifest's twrp_J706F lunch target. The device tree supplies its checked-in kernel, DTB and DTBO prebuilts.
 
 ## Important
 
